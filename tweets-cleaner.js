@@ -28,6 +28,8 @@ lazy(fs.createReadStream(config.path))
 function deleteTweet(tweets, i) {
   let next = config.callsInterval, remaining = 0
 
+  console.log(Date.now())
+
   client.post(`statuses/destroy/${tweets[i][0]}`, {}, function (err, t, res) {
     remaining = parseInt(res.headers['x-rate-limit-remaining'])
 
@@ -46,7 +48,7 @@ function deleteTweet(tweets, i) {
       return console.log(chalk.green('Done!'))
     }
 
-    console.log(chalk.green(`Next call in ${next}`))
+    console.log(chalk.green(`Next call in ${next}ms`))
     setTimeout(function() {
       deleteTweet(tweets, i+1)
     }, next)
