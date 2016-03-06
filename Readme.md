@@ -15,7 +15,7 @@ Here, tweets are accessed through your .zip archive and allows you to delete old
 
 - [Request you Twitter archive](https://twitter.com/settings/account) (you might want to keep it safe, if you ever miss your tweets!)
 - [Create an app on Twitter](https://apps.twitter.com/) the get your keys
-- `$ git clone https://github.com/hugocaillard/tweets-cleaner`
+- Download or clone the repo
 - Rename `config.sample.js` by `config.js` and set your keys and settings
 - In `config.js` Set the `maxDate`, **your tweets older than this date will be deleted**:exclamation:
 - Copy `tweets.csv` from your Twitter archive from step 1 in the same directory, or the path specified in `config.js`
