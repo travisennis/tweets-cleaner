@@ -1,0 +1,16 @@
+{
+  "name": "tweets-cleaner",
+  "version": "0.1.0",
+  "description": "",
+  "main": "tweets-cleaner.js",
+  "scripts": {
+    "start": "node tweets-cleaner"
+  },
+  "author": "Hugo Caillard",
+  "license": "WTFPL",
+  "dependencies": {
+    "chalk": "^1.1.1",
+    "lazy": "^1.0.11",
+    "twitter": "^1.2.5"
+  }
+}
