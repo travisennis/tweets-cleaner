@@ -1,6 +1,5 @@
 'use strict'
 
-const fs = require('fs')
 const chalk = require('chalk')
 const Twitter = require('twitter')
 const Converter = require('csvtojson').Converter
@@ -11,12 +10,11 @@ const logFile = config.log || './log.json'
 let log
 try {
   log = require(logFile)
-} catch(e) {
+} catch (e) {
   console.log(chalk.cyan('No log file, starting a fresh delete cycle.'))
   log = []
 }
 
-let i = 0
 let maxDate = config.maxDate ? new Date(config.maxDate) : new Date()
 
 const client = new Twitter({
@@ -27,8 +25,8 @@ const client = new Twitter({
 })
 
 const converter = new Converter({checkType: false})
-converter.fromFile(config.path,(err, json) => {
-  if (!json) {
+converter.fromFile(config.path, (err, json) => {
+  if (err || !json) {
     return console.log(chalk.red('NO VALID JSON CONVERTED!'))
   }
 
@@ -44,19 +42,19 @@ converter.fromFile(config.path,(err, json) => {
     return console.log(chalk.green('No more tweets to delete!'))
   }
 
-  console.log(chalk.green(`Starting tweet cleaner on ${Date.now()}`))
+  console.log(chalk.green(`Starting tweets cleaner on ${Date.now()} - Deleting tweets older than ${maxDate}`))
   deleteTweet(tweets, 0)
+})
 
-});
+function deleteTweet (tweets, i) {
+  let next = config.callsInterval
+  let remaining = 0
 
-function deleteTweet(tweets, i) {
-  let next = config.callsInterval, remaining = 0
-
-  client.post(`statuses/destroy`, {id: tweets[i].tweet_id}, function (err, t, res) {
+  client.post('statuses/destroy', {id: tweets[i].tweet_id}, function (err, t, res) {
     remaining = parseInt(res.headers['x-rate-limit-remaining'])
 
-    if (!isNaN(remaining) && remaining == 0) {
-      console.log(chalk.cyan(`Waiting`))
+    if (!isNaN(remaining) && remaining === 0) {
+      console.log(chalk.cyan('Waiting'))
       next = parseInt(res.headers['x-rate-limit-reset']) - Date.now()
     } else {
       if (err) {
@@ -67,7 +65,7 @@ function deleteTweet(tweets, i) {
       }
     }
 
-    jsonfile.writeFile(logFile, log, {spaces: 2}, function(err) {
+    jsonfile.writeFile(logFile, log, {spaces: 2}, function (err) {
       if (err) {
         return console.log(chalk.red('ERROR WRITING JSON!'))
       }
@@ -77,8 +75,8 @@ function deleteTweet(tweets, i) {
       }
 
       console.log(chalk.green(`Next call in ${next}ms`))
-      setTimeout(function() {
-        deleteTweet(tweets, i+1)
+      setTimeout(function () {
+        deleteTweet(tweets, i + 1)
       }, next)
     })
   })
