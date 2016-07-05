@@ -11,13 +11,18 @@ Here, tweets are accessed through your .zip archive and allows you to delete old
 
 > **This scripts definitely deletes some of your tweets!**
 
+## Features
+- Set a maximum date to limit deletions to after a certain date.
+- Tracks progress in a local log file for confirmation and in case app crashes / you want to start it up later.
+
 ## Usage
 
 - [Request you Twitter archive](https://twitter.com/settings/account) (you might want to keep it safe, if you ever miss your tweets!)
 - [Create an app on Twitter](https://apps.twitter.com/) the get your keys
 - Download or clone the repo
 - Rename `config.sample.js` by `config.js` and set your keys and settings
-- In `config.js` Set the `maxDate`, **your tweets older than this date will be deleted**:exclamation:
+- **OPTIONAL**: In `config.js` Set the `maxDate`, **your tweets older than this date will be deleted**:exclamation: If not provided, will use current date.
+- **OPTIONAL**: In `config.js` Set a file path for the log file. If not provided will create `log.json`
 - Copy `tweets.csv` from your Twitter archive from step 1 in the same directory, or the path specified in `config.js`
 - `$ npm i; npm start` :fire:
 

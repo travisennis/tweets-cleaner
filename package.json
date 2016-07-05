@@ -10,7 +10,8 @@
   "license": "WTFPL",
   "dependencies": {
     "chalk": "^1.1.1",
-    "lazy": "^1.0.11",
+    "csvtojson": "^1.0.0",
+    "jsonfile": "^2.3.1",
     "twitter": "^1.2.5"
   }
 }
