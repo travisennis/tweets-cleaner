@@ -23,6 +23,7 @@ Here, tweets are accessed through your .zip archive and allows you to delete old
 - Rename `config.sample.js` by `config.js` and set your keys and settings
 - **OPTIONAL**: In `config.js` Set the `maxDate`, **your tweets older than this date will be deleted**:exclamation: If not provided, will use current date.
 - **OPTIONAL**: In `config.js` Set a file path for the log file. If not provided will create `log.json`
+- **OPTIONAL**: In `config.js` Set the array `saveRegexp` for **saving** tweets. For example you want to save tweets with some hashtag or with mention of somebody
 - Copy `tweets.csv` from your Twitter archive from step 1 in the same directory, or the path specified in `config.js`
 - `$ npm i; npm start` :fire:
 
