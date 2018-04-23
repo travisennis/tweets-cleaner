@@ -34,8 +34,9 @@ converter.fromFile(config.path, (err, json) => {
   const tweets = json.filter(t => {
     const hasId = !isNaN(parseInt(t.tweet_id))
     const oldEnough = new Date(t.timestamp) < maxDate
+    const shouldBeSaved = config.saveRegexp.some((regexp) => new RegExp(regexp).test(t.text))
     const notDeleted = logIds.indexOf(t.tweet_id) === -1
-    return hasId && oldEnough && notDeleted
+    return hasId && oldEnough && notDeleted && !shouldBeSaved
   })
 
   if (!tweets || !tweets.length) {
