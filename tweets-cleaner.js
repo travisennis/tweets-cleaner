@@ -8,7 +8,7 @@ const config = require('./config')
 function getTweets () {
   global.window = { YTD: { tweet: { } } }
   const tweets = require(config.path)
-  return tweets.YTD.tweet.part0
+  return window.tweets.YTD.tweet.part0
 }
 
 const logFile = config.log || './log.json'
