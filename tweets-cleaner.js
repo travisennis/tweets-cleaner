@@ -2,9 +2,14 @@
 
 const chalk = require('chalk')
 const Twitter = require('twitter')
-const Converter = require('csvtojson').Converter
 const jsonfile = require('jsonfile')
 const config = require('./config')
+
+function getTweets () {
+  global.window = { YTD: { tweet: { } } }
+  const tweets = require(config.path)
+  return window.YTD.tweet.part0
+}
 
 const logFile = config.log || './log.json'
 let log
@@ -24,18 +29,17 @@ const client = new Twitter({
   access_token_secret: config.access_token_secret
 })
 
-const converter = new Converter({checkType: false})
-converter.fromFile(config.path, (err, json) => {
-  if (err || !json) {
-    return console.log(chalk.red('NO VALID JSON CONVERTED!'))
-  }
+main()
 
-  const logIds = log.map(l => l.tweet_id)
-  const tweets = json.filter(t => {
-    const hasId = !isNaN(parseInt(t.tweet_id))
-    const oldEnough = new Date(t.timestamp) < maxDate
-    const shouldBeSaved = config.saveRegexp.some((regexp) => new RegExp(regexp).test(t.text))
-    const notDeleted = logIds.indexOf(t.tweet_id) === -1
+function main () {
+  const rawTweets = getTweets()
+
+  const logIds = log.map(l => l.id)
+  const tweets = rawTweets.filter(t => {
+    const hasId = !isNaN(parseInt(t.id))
+    const oldEnough = new Date(t.created_at) < maxDate
+    const shouldBeSaved = config.saveRegexp.some((regexp) => new RegExp(regexp).test(t.full_text))
+    const notDeleted = logIds.indexOf(t.id) === -1
     return hasId && oldEnough && notDeleted && !shouldBeSaved
   })
 
@@ -45,13 +49,13 @@ converter.fromFile(config.path, (err, json) => {
 
   console.log(chalk.green(`Starting tweets cleaner on ${Date.now()} - Deleting tweets older than ${maxDate}`))
   deleteTweet(tweets, 0)
-})
+}
 
 function deleteTweet (tweets, i) {
   let next = config.callsInterval
   let remaining = 0
 
-  client.post('statuses/destroy', {id: tweets[i].tweet_id}, function (err, t, res) {
+  client.post('statuses/destroy', { id: tweets[i].id }, function (err, t, res) {
     remaining = parseInt(res.headers['x-rate-limit-remaining'])
 
     if (!isNaN(remaining) && remaining === 0) {
@@ -62,11 +66,11 @@ function deleteTweet (tweets, i) {
         console.log(chalk.yellow(JSON.stringify(err)))
       } else {
         log.push(tweets[i])
-        console.log(chalk.green(`Deleted -> ${tweets[i].tweet_id} | ${tweets[i].text}`))
+        console.log(chalk.green(`Deleted -> ${tweets[i].id} | ${tweets[i].full_text}`))
       }
     }
 
-    jsonfile.writeFile(logFile, log, {spaces: 2}, function (err) {
+    jsonfile.writeFile(logFile, log, { spaces: 2 }, function (err) {
       if (err) {
         return console.log(chalk.red('ERROR WRITING JSON!'))
       }
