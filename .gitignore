@@ -1,4 +1,6 @@
 config.js
+tweet.js
+log.json
 node_modules
 *.csv
 
